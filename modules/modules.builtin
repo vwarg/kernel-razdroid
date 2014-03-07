@@ -1,4 +1,2 @@
 kernel/drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.ko
 kernel/drivers/../../modules/../modules/drivers/video/bmem/bmem.ko
-kernel/drivers/../../modules/../modules/drivers/video/ge/ge_drv/ge_drv.ko
-kernel/drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.ko
