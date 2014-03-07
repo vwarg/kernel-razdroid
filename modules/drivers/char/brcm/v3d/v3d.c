@@ -10,6 +10,12 @@ Notwithstanding the above, under no circumstances may you combine this software
 in any way with any other Broadcom software provided under a license other than
 the GPL, without Broadcom's express prior written consent.
 *******************************************************************************/
+#include <linux/types.h>
+#include <linux/init.h>
+#include <linux/device.h>
+#include <linux/bootmem.h>
+//#include <mach/setup.h>
+#include <asm/setup.h>
 #include <linux/kernel.h>
 #include <linux/device.h>
 #include <linux/module.h>
@@ -25,11 +31,34 @@ the GPL, without Broadcom's express prior written consent.
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <linux/clk.h>
-#include <mach/clkmgr.h>
-#include <plat/syscfg.h>
+#include "clkmgr.h"
+#include "syscfg.h"
 #include <linux/platform_device.h>
 #include <linux/broadcom/v3d.h>
 #include "reg_v3d.h"
+////////////////////////////////////////////
+// Hackatronix
+////////////////////////////////////////////
+unsigned long get_mmpool_base(unsigned long size)
+{
+	int i;
+
+	for (i = (meminfo.nr_banks - 1); i >= 0; ++i) {
+		if (!(meminfo.bank[i].highmem) &&
+			(meminfo.bank[i].size >= size)) {
+			return (meminfo.bank[i].start +
+				meminfo.bank[i].size - size);	
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+#define BCM_CLK_V3D_STR_ID		"v3d"
+#define BCM_CLK_V3D_POWER_STR_ID	"v3d_pwr"
 
 #if !defined (CONFIG_BRCM_V3D_OPT)
 
@@ -68,7 +97,7 @@ static struct clk *gClkPower, *gClkAHB;
 #include <mach/bcm21553_cpufreq_gov.h>
 static struct cpufreq_client_desc *cpufreq_client;
 #endif
-static spinlock_t v3d_id_lock = SPIN_LOCK_UNLOCKED;
+DEFINE_SPINLOCK(v3d_id_lock);// = SPIN_LOCK_UNLOCKED;
 static u32 v3d_id = V3D_SERVER_ID;
 static int v3d_in_use = 0;
 #ifdef CONFIG_BCM21553_V3D_SYNC_ENABLE
@@ -236,14 +265,18 @@ static int v3d_open(struct inode *inode, struct file *filp)
 	if (!dev)
 		return -ENOMEM;
 
+#define V3D_MEMPOOL_SIZE	(56*1024*1024)
 	filp->private_data = dev;
-
-	dev->mempool.ptr = v3d_mempool_base;
+	uint32_t size = (1024*1024*2);
+	size += V3D_MEMPOOL_SIZE;
+	dev->mempool.ptr = phys_to_virt(get_mmpool_base(size)); //0; //v3d_mempool_base;
 	dev->mempool.addr = virt_to_phys(dev->mempool.ptr);
-	dev->mempool.size = v3d_mempool_size;
+
+	dev->mempool.size = V3D_MEMPOOL_SIZE;
 
 	sema_init(&dev->irq_sem, 0);
-	dev->lock = SPIN_LOCK_UNLOCKED;
+	DEFINE_SPINLOCK(lockz); // = SPIN_LOCK_UNLOCKED;
+	dev->lock=lockz;
 	dev->irq_flags.v3d_irq_flags = 0;
 	dev->irq_flags.qpu_irq_flags = 0;
 	dev->id = 0;
@@ -410,7 +443,7 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 		}
 
 	case V3D_IOCTL_SOFT_RESET:
-		board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
+		//board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
 		break;
 
 	case V3D_IOCTL_TURN_ON:
@@ -433,7 +466,7 @@ static struct file_operations v3d_fops =
 	.open		= v3d_open,
 	.release	= v3d_release,
 	.mmap		= v3d_mmap,
-	.ioctl		= v3d_ioctl,
+	.unlocked_ioctl		= v3d_ioctl,
 };
 
 

@@ -47,11 +47,12 @@
 #include <linux/file.h>
 #include <linux/debugfs.h>
 
-#include <plat/osdal_os_driver.h>
-#include <plat/osdal_os_service.h>
-#include <plat/dma_drv.h>
+#include "osdal_os_driver.h"
+#include "osdal_os_service.h"
+#include "dma_drv.h"
 
 #include <linux/proc_fs.h>
+#include "internal.h"
 
 /* module description */
 MODULE_LICENSE("GPL v2");
@@ -1309,7 +1310,7 @@ static int bmem_wrapper_mmap(struct file *file,
 static const struct file_operations bmem_wrapper_fops = {
 	.open = bmem_wrapper_open,
 	.release = bmem_wrapper_release,
-	.ioctl = bmem_wrapper_ioctl,
+	.unlocked_ioctl = bmem_wrapper_ioctl,
 	.mmap = bmem_wrapper_mmap,
 };
 
@@ -1381,15 +1382,15 @@ int __init bmem_wrapper_init(void)
 
 	KLOG_D("Module inserted: major[%d]\n", bmem_major);
 
-	init_MUTEX(&bmem_sem);
-	init_MUTEX(&bmem_status_sem);
-	init_MUTEX(&bmem_virt_list_sem);
+	sema_init(&bmem_sem, 1);
+	sema_init(&bmem_status_sem, 1);
+	sema_init(&bmem_virt_list_sem, 1);
 
-	bmem_proc_file = create_proc_entry(DEV_NAME, 0644, NULL);
+	bmem_proc_file = proc_create(DEV_NAME, 0644, NULL, &bmem_wrapper_fops);
 	if (bmem_proc_file) {
 		bmem_proc_file->data = NULL;
-		bmem_proc_file->read_proc = bmem_proc_get_status;
-		bmem_proc_file->write_proc = bmem_proc_set_status;
+		// bmem_proc_file->read_proc = bmem_proc_get_status;
+		// bmem_proc_file->write_proc = bmem_proc_set_status;
 		// bmem_proc_file->owner = THIS_MODULE;
 	}
 	else {

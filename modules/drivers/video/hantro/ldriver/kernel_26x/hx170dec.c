@@ -70,10 +70,10 @@ the GPL, without Broadcom's express prior written consent.
 #include <asm/irq.h>
 #include <linux/version.h>
 #include <linux/broadcom/bcm_major.h>
-#include <mach/reg_clkpwr.h>
-#include <cfg_global.h>
+//#include <mach/reg_clkpwr.h>
+//#include <cfg_global.h>
 
-#if (CFG_GLOBAL_CHIP_FAMILY == CFG_GLOBAL_CHIP_FAMILY_BCMRING)
+#if (0)
 #include <mach/csp/mm_addr.h>
 #include <mach/csp/mm_io.h>
 #include <mach/csp/chipcHw_inline.h>
@@ -81,7 +81,7 @@ the GPL, without Broadcom's express prior written consent.
 #endif
 
 #include <linux/clk.h>
-#include <mach/clkmgr.h>
+//#include <mach/clkmgr.h>
 #include <asm/clkdev.h>
 #ifdef CONFIG_HAS_WAKELOCK
 #include <linux/wakelock.h>

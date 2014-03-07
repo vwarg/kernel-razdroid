@@ -40,9 +40,17 @@
 #include <linux/broadcom/bcm_gememalloc_wrapper.h>
 #include <linux/broadcom/bcm_gememalloc_ioctl.h>
 
-#include <plat/osdal_os_driver.h>
-#include <plat/osdal_os_service.h>
-#include <plat/dma_drv.h>
+#include "osdal_os_driver.h"
+#include "osdal_os_service.h"
+#include "dma_drv.h"
+
+// Hackelito
+#include <linux/types.h>
+#include <linux/init.h>
+#include <linux/device.h>
+#include <linux/bootmem.h>
+//#include <mach/setup.h>
+#include <asm/setup.h>
 
 /* module description */
 MODULE_LICENSE("GPL v2");
@@ -50,6 +58,24 @@ MODULE_AUTHOR("Braodcom");
 
 #define DRV_NAME "gememalloc"
 #define DEV_NAME "gememalloc"
+
+////////////////////////////////////////////
+// Hackatronix
+////////////////////////////////////////////
+unsigned long get_mmpool_base2(unsigned long size)
+{
+	int i;
+
+	for (i = (meminfo.nr_banks - 1); i >= 0; ++i) {
+		if (!(meminfo.bank[i].highmem) &&
+			(meminfo.bank[i].size >= size)) {
+			return (meminfo.bank[i].start +
+				meminfo.bank[i].size - size);	
+		}
+	}
+	return 0;
+}
+
 
 #define gememalloc_BASIC 0
 #define gememalloc_MAX_OUTPUT 1
@@ -326,7 +352,7 @@ static int gememalloc_wrapper_mmap(struct file *file,
 static const struct file_operations gememalloc_wrapper_fops = {
 	.open = gememalloc_wrapper_open,
 	.release = gememalloc_wrapper_release,
-	.ioctl = gememalloc_wrapper_ioctl,
+	.unlocked_ioctl = gememalloc_wrapper_ioctl,
 	.mmap = gememalloc_wrapper_mmap,
 };
 
@@ -372,8 +398,8 @@ int __init gememalloc_wrapper_init(void)
 	init_completion(&dma_complete);
 
 	pr_info("gememalloc_wrapper: major =%d\n",gememalloc_major);
-
-	alloc_mem = ge_mempool_base;
+	void* real_ge_mempool_base = phys_to_virt(get_mmpool_base2((1024*1024*2))+(56*1024*1024));
+	alloc_mem = real_ge_mempool_base;
 	dma_cohr_start_addr = (dma_addr_t) virt_to_phys(alloc_mem);
 
 	if (alloc_mem == NULL) {

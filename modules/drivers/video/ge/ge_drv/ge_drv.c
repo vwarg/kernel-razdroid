@@ -42,9 +42,9 @@ the GPL, without Broadcom's express prior written consent.
 #include <linux/version.h>
 #include <linux/broadcom/bcm_major.h>
 
-#include <cfg_global.h>
+//#include <cfg_global.h>
 
-#if (CFG_GLOBAL_CHIP_FAMILY == CFG_GLOBAL_CHIP_FAMILY_BCMRING)
+#if (0)
 #include <mach/csp/mm_addr.h>
 #include <mach/csp/mm_io.h>
 #include <mach/csp/chipcHw_inline.h>
@@ -52,7 +52,7 @@ the GPL, without Broadcom's express prior written consent.
 #endif
 
 #include <linux/clk.h>
-#include <mach/clkmgr.h>
+#include "clkmgr.h"
 #ifdef CONFIG_HAS_WAKELOCK
 #include <linux/wakelock.h>
 #endif
@@ -68,7 +68,7 @@ MODULE_DESCRIPTION("ge driver - driver module for graphics engine");
 #define DEV_NAME "ge_drv"
 
 #define IO_SIZE 3876/*bytes*/
-#define GE_IO_BASE                0x08950000
+#define GE_IO_BASE                0xff000000 - 0x08950000
 
 static unsigned long base_port = GE_IO_BASE;
 static dma_addr_t dma_cohr_start_addr;
@@ -258,7 +258,7 @@ static int ge_ioctl(struct inode *inode, struct file *filp,
 static struct file_operations ge_drv_fops = {
 open:	ge_open,
 release:ge_release,
-ioctl:	ge_ioctl,
+unlocked_ioctl:	ge_ioctl,
 mmap:	ge_mmap,
 };
 

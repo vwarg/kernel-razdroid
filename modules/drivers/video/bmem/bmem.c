@@ -15,7 +15,7 @@ the GPL, without Broadcom's express prior written consent.
 #include <linux/module.h>
 #include <linux/slab.h>
 
-#include <cfg_global.h>
+//#include <cfg_global.h>
 /* Our header */
 #include "bmem.h"
 

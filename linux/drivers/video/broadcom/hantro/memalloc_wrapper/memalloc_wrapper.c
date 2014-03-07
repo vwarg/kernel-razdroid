@@ -12,7 +12,12 @@
 * software in any way with any other Broadcom software provided under a license
 * other than the GPL, without Broadcom's express prior written consent.
 *******************************************************************************/
-
+#include <linux/types.h>
+#include <linux/init.h>
+#include <linux/device.h>
+#include <linux/bootmem.h>
+//#include <mach/setup.h>
+#include <asm/setup.h>
 #include <linux/kernel.h>
 #include <linux/module.h>
 /* needed for __init,__exit directives */
@@ -42,9 +47,28 @@
 
 #include <linux/android_pmem.h>
 
-#include <plat/osdal_os_driver.h>
-#include <plat/osdal_os_service.h>
-#include <plat/dma_drv.h>
+#include "osdal_os_driver.h"
+#include "osdal_os_service.h"
+#include "dma_drv.h"
+
+
+////////////////////////////////////////////
+// Hackatronix
+////////////////////////////////////////////
+unsigned long get_mmpool_base3(unsigned long size)
+{
+	int i;
+
+	for (i = (meminfo.nr_banks - 1); i >= 0; ++i) {
+		if (!(meminfo.bank[i].highmem) &&
+			(meminfo.bank[i].size >= size)) {
+			return (meminfo.bank[i].start +
+				meminfo.bank[i].size - size);	
+		}
+	}
+	return 0;
+}
+
 
 
 /* module description */
@@ -576,7 +600,7 @@ static int memalloc_wrapper_mmap(struct file *file, struct vm_area_struct *vma)
 static const struct file_operations memalloc_wrapper_fops = {
 	.open = memalloc_wrapper_open,
 	.release = memalloc_wrapper_release,
-	.ioctl = memalloc_wrapper_ioctl,
+	.unlocked_ioctl = memalloc_wrapper_ioctl,
 	.mmap = memalloc_wrapper_mmap,
 };
 
@@ -603,7 +627,7 @@ int __init memalloc_wrapper_init(void)
 	int result;
 
 	pr_debug(KERN_DEBUG "memalloc_init\n");
-
+	//memalloc_mempool_base = alloc_bootmem_low_pages(2 * PAGE_SIZE);
 	init_completion(&dma_complete);
 
 	result =
