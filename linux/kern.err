@@ -1,0 +1,88 @@
+  CHK     include/generated/uapi/linux/version.h
+  CHK     include/generated/utsrelease.h
+  CC      scripts/mod/devicetable-offsets.s
+make[1]: `include/generated/mach-types.h' is up to date.
+  GEN     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/file2alias.o
+  CALL    scripts/checksyscalls.sh
+  HOSTLD  scripts/mod/modpost
+  CHK     include/generated/compile.h
+  CC      arch/arm/mach-bcm2708/bcm2708.o
+arch/arm/mach-bcm2708/bcm2708.c:121:13: warning: function declaration isn't a prototype [-Wstrict-prototypes]
+ static void ugly_kernel_hack_v1(){
+             ^
+  LD      arch/arm/mach-bcm2708/built-in.o
+  CHK     kernel/config_data.h
+  CC      drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.o
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c: In function 'gememalloc_open':
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:58:8: warning: assignment makes pointer from integer without a cast [enabled by default]
+  *hdlp = openCounter++;
+        ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c: In function 'gememalloc_release':
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:65:2: warning: format '%d' expects argument of type 'int', but argument 2 has type 'GEMEMALLOC_HDL' [-Wformat=]
+  printk("gememalloc_release: Handle: %d\n", hdl);
+  ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c: In function 'AllocateMemory':
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:178:18: warning: assignment makes integer from pointer without a cast [enabled by default]
+     curr->handle = hdl;
+                  ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:190:18: warning: assignment makes integer from pointer without a cast [enabled by default]
+     curr->handle = hdl;
+                  ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c: In function 'FreeMemoryForHandle':
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:215:27: warning: comparison between pointer and integer [enabled by default]
+         if ( head->handle == hdl)
+                           ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:218:11: warning: unused variable 'next' [-Wunused-variable]
+    chunk* next = head->next;
+           ^
+drivers/../../modules/../modules/drivers/video/ge/gememalloc/gememalloc.c:217:11: warning: unused variable 'prev' [-Wunused-variable]
+    chunk* prev = head->prev;
+           ^
+  LD      drivers/../../modules/../modules/drivers/video/ge/gememalloc/built-in.o
+  LD      drivers/../../modules/../modules/drivers/video/ge/built-in.o
+  LD      drivers/../../modules/built-in.o
+WARNING: drivers/../../modules/built-in.o(.data+0x158): Section mismatch in reference from the variable bcm21xx_dma_driver to the function .init.text:bcm21xx_dma_probe()
+The variable bcm21xx_dma_driver references
+the function __init bcm21xx_dma_probe()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+
+  LD      drivers/built-in.o
+WARNING: drivers/built-in.o(.data+0x478): Section mismatch in reference from the variable bcm21xx_dma_driver to the function .init.text:bcm21xx_dma_probe()
+The variable bcm21xx_dma_driver references
+the function __init bcm21xx_dma_probe()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+
+  LINK    vmlinux
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+WARNING: vmlinux.o(.data+0x1bd90): Section mismatch in reference from the variable bcm21xx_dma_driver to the function .init.text:bcm21xx_dma_probe()
+The variable bcm21xx_dma_driver references
+the function __init bcm21xx_dma_probe()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
+
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  LD      init/built-in.o
+  KSYM    .tmp_kallsyms1.o
+  KSYM    .tmp_kallsyms2.o
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  OBJCOPY arch/arm/boot/Image
+  Building modules, stage 2.
+  Kernel: arch/arm/boot/Image is ready
+  GZIP    arch/arm/boot/compressed/piggy.gzip
+  AS      arch/arm/boot/compressed/piggy.gzip.o
+  LD      arch/arm/boot/compressed/vmlinux
+  OBJCOPY arch/arm/boot/zImage
+  Kernel: arch/arm/boot/zImage is ready
+  MODPOST 1214 modules

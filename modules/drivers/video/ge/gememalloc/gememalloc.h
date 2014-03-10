@@ -16,7 +16,9 @@ the GPL, without Broadcom's express prior written consent.
 /*
  * Macros to help debugging
  */
-
+#ifndef GEMEMALLOC_DEBUG
+#define GEMEMALLOC_DEBUG 1
+#endif
 #undef PDEBUG			/* undef it, just in case */
 #ifdef GEMEMALLOC_DEBUG
 #  ifdef __KERNEL__

@@ -36,6 +36,8 @@ the GPL, without Broadcom's express prior written consent.
 #include <linux/platform_device.h>
 #include <linux/broadcom/v3d.h>
 #include "reg_v3d.h"
+#include <mach/vcio.h>
+#include "v3d.h"
 ////////////////////////////////////////////
 // Hackatronix
 ////////////////////////////////////////////
@@ -53,7 +55,23 @@ unsigned long get_mmpool_base(unsigned long size)
 	return 0;
 }
 
+static int qpu_enable(unsigned int enable) {
+	int i = 1,ret;
+	unsigned int message[32];
+	message[i++] = 0; // request
+	message[i++] = 0x30012; // set qpu enabled tag
+	message[i++] = 4; // size of buffer
+	message[i++] = 4; // size of data
+	message[i++] = enable;
+	message[i++] = 0; // end tag
+	message[0] = i * sizeof(unsigned int);
 
+
+	bcm_mailbox_property(message,i*sizeof(unsigned int));
+
+	ret = message[5];
+	return ret;
+}
 
 
 
@@ -522,8 +540,19 @@ int __init v3d_init(void)
 	cpufreq_client = cpufreq_bcm_client_get("v3d");
 #endif
 	v3d_turn_all_on();
-
-	v3d_base = (void __iomem *)ioremap_nocache(BCM21553_V3D_BASE, SZ_64K);
+//v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
+//20:56:13 <+clever> Warg: this is what i use, it works perfectly
+//20:56:18 <+clever> if (v3dio[V3D_IDENT0] == 0x02443356) {
+	volatile unsigned *v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
+	if (v3dio[V3D_IDENT0] == 0x02443356) {
+		printk(KERN_ERR "v3d core already online\n");
+	} else {
+		qpu_enable(1);
+		if (v3dio[V3D_IDENT0] != 0x02443356) {
+			printk(KERN_ERR "cant find magic number in v3d registers\n");
+		}
+	}
+	v3d_base = v3dio;
 	if (v3d_base == NULL)
 		goto err;
 

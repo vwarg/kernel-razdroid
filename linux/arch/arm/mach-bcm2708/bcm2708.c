@@ -29,6 +29,7 @@
 #include <linux/slab.h>
 #include <linux/gfp.h>
 #include <asm/memory.h>
+#include <linux/vmalloc.h>
 
 #include <asm/mach/map.h>
 #include <linux/init.h>
@@ -78,9 +79,7 @@
 #endif
 
 #define WARG_HACKTRONIX 1
-#ifndef _BMEM_SIZE
-#define _BMEM_SIZE (24*1024*1024)
-#endif
+
 #ifdef CONFIG_BRCM_V3D
 #include <linux/broadcom/v3d.h>
 void *v3d_mempool_base;
@@ -105,66 +104,120 @@ void *memalloc_mempool_base;
 #endif
 void *cam_mempool_base;
 
-unsigned long get_mmpool_based(unsigned long size)
+static unsigned long get_mmpool_base_2708(unsigned long size)
 {
-//PLEASE SHOOT WHOEVER ORIGINALLY WROTE THIS
-return -1;
+	int i;
+
+	for (i = (meminfo.nr_banks - 1); i >= 0; ++i) {
+		if (!(meminfo.bank[i].highmem) &&
+			(meminfo.bank[i].size >= size)) {
+			printk(KERN_ERR "mmpool_base_2708 -> SUCCESS!\n");
+			return (meminfo.bank[i].start +
+				meminfo.bank[i].size - size);
+		}
+	}
+	return 0;
+}
+
+static void* ayaabtu(uint32_t base, unsigned long size){	//all your allocations are belong to us
+	//I'm probably worse than Hitler for this.
+	return vmalloc(size);
 }
 
 static void ugly_kernel_hack_v1(){
-	void* ret;
+	int ret, size;
 	uint32_t v3d_mem_phys_base = 0;
-	
 
-	//bmem_phys_base = get_mmpool_based(BMEM_SIZE);
-	//size = v3d_mempool_size;
-	//size += BMEM_SIZE;
-	//v3d_mem_phys_base = get_mmpool_based(size);
-	//bmem_phys_base += v3d_mempool_size;
-	
+#if 1
+#if defined (CONFIG_BMEM)
+	bmem_phys_base = get_mmpool_base_2708(BMEM_SIZE);
+#else
+#ifdef CONFIG_GE_WRAP
+	ge_mem_phys_base = get_mmpool_base_2708(gememalloc_SIZE);
+#endif
+#endif
+#ifdef CONFIG_BRCM_V3D
+	size = v3d_mempool_size;
+#if defined (CONFIG_BMEM)
+	size += BMEM_SIZE;
+#else
+#ifdef CONFIG_GE_WRAP
+	size += gememalloc_SIZE;
+#endif
+#endif
+	v3d_mem_phys_base = get_mmpool_base_2708(size);
+#endif
+#else
+#if defined(CONFIG_BRCM_V3D)
+#if defined (CONFIG_BMEM)
+	bmem_phys_base += v3d_mempool_size;
+#else
+#if defined(CONFIG_GE_WRAP)
+	ge_mem_phys_base += v3d_mempool_size;
+#endif
+#endif
+#endif
+#endif
 
-
+#ifdef CONFIG_BRCM_V3D
 	if (v3d_mempool_size) {
-		v3d_mempool_base = alloc_bootmem_low(v3d_mempool_size);// 0;
-		//ret = reserve_bootmem(v3d_mem_phys_base, v3d_mempool_size, BOOTMEM_EXCLUSIVE);
-		ret = v3d_mempool_base;
-		if (ret == NULL) {
+		void* v3d_vmem = ayaabtu(v3d_mem_phys_base, v3d_mempool_size);
+		if (v3d_vmem == NULL){
 			printk(KERN_ERR "Failed to allocate memory for v3d\n");
 			return;
 		}
-	
-		v3d_mem_phys_base = (uint32_t)virt_to_phys(v3d_mempool_base);
+		
+		v3d_mem_phys_base = virt_to_phys(v3d_vmem);
 		pr_info("v3d phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-		v3d_mem_phys_base, (uint32_t)v3d_mempool_base, (int)v3d_mempool_size);
+			v3d_mem_phys_base, (uint32_t)v3d_vmem, (int)v3d_mempool_size);
 	} else {
 		v3d_mempool_base = NULL;
 		v3d_mem_phys_base = 0;
 	}
+#endif
 
-
-	bmem_mempool_base = alloc_bootmem_low(_BMEM_SIZE);
-	ret = bmem_mempool_base;
-	if (ret == NULL) {
+#if defined (CONFIG_BMEM)
+	ret = reserve_bootmem(bmem_phys_base, BMEM_SIZE, BOOTMEM_EXCLUSIVE);
+	if (ret < 0) {
 		printk(KERN_ERR "Failed to allocate memory for ge\n");
 		return;
 	}
 
-	bmem_phys_base = (uint32_t)virt_to_phys(bmem_mempool_base);
+	bmem_mempool_base = phys_to_virt(bmem_phys_base);
 	pr_info("bmem phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-	bmem_phys_base, (uint32_t)bmem_mempool_base, _BMEM_SIZE);
+		bmem_phys_base, (uint32_t)bmem_mempool_base, BMEM_SIZE);
+#else
+#ifdef CONFIG_GE_WRAP
+	//ret = reserve_bootmem(ge_mem_phys_base, gememalloc_SIZE, BOOTMEM_EXCLUSIVE);
+	void* ge_vmem = ayaabtu(0, gememalloc_SIZE);
+	if (ge_vmem == NULL) {
+		printk(KERN_ERR "Failed to allocate memory for ge\n");
+		return;
+	}
 
+	ge_mem_phys_base = virt_to_phys(ge_vmem);
+	pr_info("ge phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
+		ge_mem_phys_base, (uint32_t)ge_vmem, gememalloc_SIZE);
+#endif
+#endif
 
-
+#if defined (CONFIG_BMEM)
+#ifdef CONFIG_HANTRO_WRAP
 	memalloc_mempool_base = alloc_bootmem_low_pages(2 * PAGE_SIZE);
 	pr_info("memalloc(hantro) phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-	(uint32_t)virt_to_phys(memalloc_mempool_base), (uint32_t)memalloc_mempool_base,
-	(uint32_t)(2 * PAGE_SIZE));
-
+		(uint32_t)virt_to_phys(memalloc_mempool_base), (uint32_t)memalloc_mempool_base,
+		(uint32_t)(2 * PAGE_SIZE));
+#endif
 	cam_mempool_base = alloc_bootmem_low_pages(2 * PAGE_SIZE);
 	pr_info("pmem(camera) phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-	(uint32_t)virt_to_phys(cam_mempool_base), (uint32_t)cam_mempool_base,
-	(uint32_t)(2 * PAGE_SIZE));
-
+		(uint32_t)virt_to_phys(cam_mempool_base), (uint32_t)cam_mempool_base,
+		(uint32_t)(2 * PAGE_SIZE));
+#else
+#ifdef CONFIG_HANTRO_WRAP
+	memalloc_mempool_base = ayaabtu(0, MEMALLOC_SIZE + SZ_2M);//alloc_bootmem_low_pages(MEMALLOC_SIZE + SZ_2M);
+#endif
+	cam_mempool_base = ayaabtu(0, 1024*1024*8);//alloc_bootmem_low_pages(1024 * 1024 * 8);
+#endif
 }
 /* Effectively we have an IOMMU (ARM<->VideoCore map) that is set up to
  * give us IO access only to 64Mbytes of physical memory (26 bits).  We could

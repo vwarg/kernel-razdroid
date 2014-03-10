@@ -619,6 +619,8 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
   include/uapi/linux/uuid.h \
   include/linux/broadcom/v3d.h \
   drivers/../../modules/../modules/drivers/char/brcm/v3d/reg_v3d.h \
+  arch/arm/mach-bcm2708/include/mach/vcio.h \
+  drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.h \
 
 drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o: $(deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o)
 
