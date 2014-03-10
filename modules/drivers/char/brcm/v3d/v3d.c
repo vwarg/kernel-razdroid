@@ -106,7 +106,7 @@ static int qpu_enable(unsigned int enable) {
 
 #define V3D_SERVER_ID	1	// 0 is treated as invalid id
 
-
+static volatile unsigned *v3dio;
 static int v3d_major = V3D_DEV_MAJOR;
 static struct class *v3d_class;
 static void __iomem *v3d_base = NULL;
@@ -165,7 +165,8 @@ static inline u32 v3d_read(u32 reg)
 #ifdef CONFIG_BCM21553_V3D_SYNC_ENABLE
 	sync_mutex_down(sync_flag_base);
 #endif
-	flags = ioread32(v3d_base + reg);
+	//flags = ioread32(v3d_base + reg);
+	flags = v3dio[reg];
 #ifdef CONFIG_BCM21553_V3D_SYNC_ENABLE
 	v3d_clean();
 	sync_mutex_up(sync_flag_base);
@@ -543,7 +544,7 @@ int __init v3d_init(void)
 //v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
 //20:56:13 <+clever> Warg: this is what i use, it works perfectly
 //20:56:18 <+clever> if (v3dio[V3D_IDENT0] == 0x02443356) {
-	volatile unsigned *v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
+	v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
 	if (v3dio[V3D_IDENT0] == 0x02443356) {
 		printk(KERN_ERR "v3d core already online\n");
 	} else {
