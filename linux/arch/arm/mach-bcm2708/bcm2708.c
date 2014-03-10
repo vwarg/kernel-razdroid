@@ -25,6 +25,11 @@
 #include <asm/setup.h>
 #include <linux/dma-mapping.h>
 
+//SWAGHAX
+#include <linux/slab.h>
+#include <linux/gfp.h>
+#include <asm/memory.h>
+
 #include <asm/mach/map.h>
 #include <linux/init.h>
 #include <linux/device.h>
@@ -100,42 +105,35 @@ void *memalloc_mempool_base;
 #endif
 void *cam_mempool_base;
 
-unsigned long get_mmpool_base88(unsigned long size)
+unsigned long get_mmpool_based(unsigned long size)
 {
-int i;
-
-for (i = (meminfo.nr_banks - 1); i >= 0; ++i) {
-if (!(meminfo.bank[i].highmem) &&
-(meminfo.bank[i].size >= size)) {
-return (meminfo.bank[i].start +
-meminfo.bank[i].size - size);
-}
-}
-
-return 0;
+//PLEASE SHOOT WHOEVER ORIGINALLY WROTE THIS
+return -1;
 }
 
 static void ugly_kernel_hack_v1(){
-	int ret, size;
+	void* ret;
 	uint32_t v3d_mem_phys_base = 0;
+	
 
-
-	bmem_phys_base = get_mmpool_base88(BMEM_SIZE);
-	size = v3d_mempool_size;
-	size += BMEM_SIZE;
-	v3d_mem_phys_base = get_mmpool_base88(size);
-	bmem_phys_base += v3d_mempool_size;
-
+	//bmem_phys_base = get_mmpool_based(BMEM_SIZE);
+	//size = v3d_mempool_size;
+	//size += BMEM_SIZE;
+	//v3d_mem_phys_base = get_mmpool_based(size);
+	//bmem_phys_base += v3d_mempool_size;
+	
 
 
 	if (v3d_mempool_size) {
-		ret = reserve_bootmem(v3d_mem_phys_base, v3d_mempool_size, BOOTMEM_EXCLUSIVE);
-		if (ret < 0) {
+		v3d_mempool_base = alloc_bootmem_low(v3d_mempool_size);// 0;
+		//ret = reserve_bootmem(v3d_mem_phys_base, v3d_mempool_size, BOOTMEM_EXCLUSIVE);
+		ret = v3d_mempool_base;
+		if (ret == NULL) {
 			printk(KERN_ERR "Failed to allocate memory for v3d\n");
 			return;
 		}
 	
-		v3d_mempool_base = phys_to_virt(v3d_mem_phys_base);
+		v3d_mem_phys_base = (uint32_t)virt_to_phys(v3d_mempool_base);
 		pr_info("v3d phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
 		v3d_mem_phys_base, (uint32_t)v3d_mempool_base, (int)v3d_mempool_size);
 	} else {
@@ -143,15 +141,17 @@ static void ugly_kernel_hack_v1(){
 		v3d_mem_phys_base = 0;
 	}
 
-	ret = reserve_bootmem(bmem_phys_base, BMEM_SIZE, BOOTMEM_EXCLUSIVE);
-	if (ret < 0) {
+
+	bmem_mempool_base = alloc_bootmem_low(_BMEM_SIZE);
+	ret = bmem_mempool_base;
+	if (ret == NULL) {
 		printk(KERN_ERR "Failed to allocate memory for ge\n");
 		return;
 	}
 
-	bmem_mempool_base = phys_to_virt(bmem_phys_base);
+	bmem_phys_base = (uint32_t)virt_to_phys(bmem_mempool_base);
 	pr_info("bmem phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-	bmem_phys_base, (uint32_t)bmem_mempool_base, BMEM_SIZE);
+	bmem_phys_base, (uint32_t)bmem_mempool_base, _BMEM_SIZE);
 
 
 
@@ -164,10 +164,6 @@ static void ugly_kernel_hack_v1(){
 	pr_info("pmem(camera) phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
 	(uint32_t)virt_to_phys(cam_mempool_base), (uint32_t)cam_mempool_base,
 	(uint32_t)(2 * PAGE_SIZE));
-
-	memalloc_mempool_base = alloc_bootmem_low_pages(MEMALLOC_SIZE + SZ_2M);
-
-	cam_mempool_base = alloc_bootmem_low_pages(1024 * 1024 * 8);
 
 }
 /* Effectively we have an IOMMU (ARM<->VideoCore map) that is set up to
