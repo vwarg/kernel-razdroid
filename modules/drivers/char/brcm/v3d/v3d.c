@@ -543,13 +543,13 @@ int __init v3d_init(void)
 	v3d_turn_all_on();
 //v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
 //20:56:13 <+clever> Warg: this is what i use, it works perfectly
-//20:56:18 <+clever> if (v3dio[V3D_IDENT0] == 0x02443356) {
+//20:56:18 <+clever> if (v3dio[IDENT0] == 0x02443356) {
 	v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
-	if (v3dio[V3D_IDENT0] == 0x02443356) {
+	if (v3dio[IDENT0] == 0x02443356) {
 		printk(KERN_ERR "v3d core already online\n");
 	} else {
 		qpu_enable(1);
-		if (v3dio[V3D_IDENT0] != 0x02443356) {
+		if (v3dio[IDENT0] != 0x02443356) {
 			printk(KERN_ERR "cant find magic number in v3d registers\n");
 		}
 	}

@@ -177,15 +177,16 @@ static void ugly_kernel_hack_v1(){
 #endif
 
 #if defined (CONFIG_BMEM)
-	ret = reserve_bootmem(bmem_phys_base, BMEM_SIZE, BOOTMEM_EXCLUSIVE);
-	if (ret < 0) {
+	//ret = reserve_bootmem(bmem_phys_base, BMEM_SIZE, BOOTMEM_EXCLUSIVE);
+	void* bmem_vmem = ayaabtu(0, BMEM_SIZE);
+	if (bmem_vmem == NULL) {
 		printk(KERN_ERR "Failed to allocate memory for ge\n");
 		return;
 	}
-
-	bmem_mempool_base = phys_to_virt(bmem_phys_base);
+	bmem_mempool_base = bmem_vmem;
+	bmem_phys_base = virt_to_phys(bmem_vmem);
 	pr_info("bmem phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
-		bmem_phys_base, (uint32_t)bmem_mempool_base, BMEM_SIZE);
+		bmem_phys_base, (uint32_t)bmem_vmem, BMEM_SIZE);
 #else
 #ifdef CONFIG_GE_WRAP
 	//ret = reserve_bootmem(ge_mem_phys_base, gememalloc_SIZE, BOOTMEM_EXCLUSIVE);
@@ -203,12 +204,12 @@ static void ugly_kernel_hack_v1(){
 
 #if defined (CONFIG_BMEM)
 #ifdef CONFIG_HANTRO_WRAP
-	memalloc_mempool_base = alloc_bootmem_low_pages(2 * PAGE_SIZE);
+	memalloc_mempool_base = ayaabtu(0, 2 * PAGE_SIZE);
 	pr_info("memalloc(hantro) phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
 		(uint32_t)virt_to_phys(memalloc_mempool_base), (uint32_t)memalloc_mempool_base,
 		(uint32_t)(2 * PAGE_SIZE));
 #endif
-	cam_mempool_base = alloc_bootmem_low_pages(2 * PAGE_SIZE);
+	cam_mempool_base = ayaabtu(0, 2 * PAGE_SIZE);
 	pr_info("pmem(camera) phys[0x%08x] virt[0x%08x] size[0x%08x] \n",
 		(uint32_t)virt_to_phys(cam_mempool_base), (uint32_t)cam_mempool_base,
 		(uint32_t)(2 * PAGE_SIZE));

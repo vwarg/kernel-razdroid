@@ -673,6 +673,7 @@ static int bmem_wrapper_ioctl(struct inode *inode, struct file *filp,
 	if ((_IOC_TYPE(cmd) != BMEM_WRAP_MAGIC) && (_IOC_TYPE(cmd) != PMEM_IOCTL_MAGIC)
 		&& (_IOC_TYPE(cmd) != HANTRO_WRAP_MAGIC) ) {
 		KLOG_E("ioctl IOC_TYPE does not match expected [PMEM, GE, ME] magic : cmd[0x%08x]", cmd);
+		KLOG_E("ioctl IOC_TYPE does not match expected [PMEM, GE, ME] magic : actual magic: [0x%08x]", _IOC_TYPE(cmd));
 		return -ENOTTY;
 	}
 

@@ -25,8 +25,8 @@ the GPL, without Broadcom's express prior written consent.
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <linux/clk.h>
-#include <mach/clkmgr.h>
-#include <plat/syscfg.h>
+#include "clkmgr.h"
+#include "syscfg.h"
 #include <linux/platform_device.h>
 #include <linux/dma-mapping.h>
 #include <linux/kthread.h>
@@ -34,6 +34,7 @@ the GPL, without Broadcom's express prior written consent.
 #include <linux/proc_fs.h>
 #include <linux/broadcom/v3d.h>
 #include "reg_v3d.h"
+#include <mach/vcio.h>
 
 #ifndef V3D_DEV_NAME
 #define V3D_DEV_NAME	"v3d"
@@ -75,6 +76,9 @@ the GPL, without Broadcom's express prior written consent.
 #ifdef V3D_JOB_RETRY_ON_TIMEOUT
 #define V3D_JOB_MAX_RETRIES (1)
 #endif
+
+
+static volatile unsigned *v3dio;
 
 typedef struct {
 	u32 id;
@@ -191,7 +195,7 @@ static unsigned int v3d_stat_start_usec = 0;
 // #define V3D_BLOCKING_DRIVER
 #ifdef V3D_BLOCKING_DRIVER
 struct semaphore v3d_dbg_sem;
-#define INIT_ACQUIRE init_MUTEX(&v3d_dbg_sem)
+#define INIT_ACQUIRE init_sema(&v3d_dbg_sem, 1)
 #define ACQUIRE_V3D down(&v3d_dbg_sem)
 #define RELEASE_V3D up(&v3d_dbg_sem)
 #else
@@ -1198,7 +1202,7 @@ static int v3d_job_start(int turn_on)
 	if ((p_v3d_job->job_type == V3D_JOB_REND) && (p_v3d_job->job_intern_state == 0)) {
 		KLOG_V("V3D_JOB_REND RENDERER launching...");
 		p_v3d_job->job_intern_state = 2;
-		board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
+		//board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
 		v3d_reg_init();
 		if (v3d_check_status(0)) {
 			v3d_print_status();
@@ -1208,7 +1212,7 @@ static int v3d_job_start(int turn_on)
 	} else if ((p_v3d_job->job_type == V3D_JOB_BIN_REND) && (p_v3d_job->job_intern_state == 0)) {
 		KLOG_V("V3D_JOB_BIN_REND BINNER launching...");
 		p_v3d_job->job_intern_state = 1;
-		board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
+		//board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
 		v3d_reg_init();
 		if (v3d_check_status(1)) {
 			v3d_print_status();
@@ -1239,7 +1243,7 @@ static void v3d_reset(void)
 {
 	iowrite32(0x8000, 				v3d_base + CT0CS);
 	iowrite32(0x8000, 				v3d_base + CT1CS);
-	board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
+	//board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
 	v3d_reg_init();
 	v3d_in_use = 0;
 	v3d_flags = 0;
@@ -1793,7 +1797,7 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 		break;
 #if 0
 	case V3D_IOCTL_SOFT_RESET:
-		board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
+		//board_sysconfig(SYSCFG_V3D, SYSCFG_INIT);
 		break;
 
 	case V3D_IOCTL_TURN_ON:
@@ -1821,7 +1825,13 @@ static struct file_operations v3d_fops =
 	.open		= v3d_open,
 	.release	= v3d_release,
 	.mmap		= v3d_mmap,
-	.ioctl		= v3d_ioctl,
+	.unlocked_ioctl		= v3d_ioctl,
+};
+
+static struct file_operations v3d_proc_fops =
+{
+	.read		= v3d_proc_get_status,
+	.write		= v3d_proc_set_status,
 };
 
 
@@ -1853,6 +1863,25 @@ struct platform_driver v3d_driver = {
     .resume     =   v3d_resume,
 };
 
+static int qpu_enable(unsigned int enable) {
+	int i = 1,ret;
+	unsigned int message[32];
+	message[i++] = 0; // request
+	message[i++] = 0x30012; // set qpu enabled tag
+	message[i++] = 4; // size of buffer
+	message[i++] = 4; // size of data
+	message[i++] = enable;
+	message[i++] = 0; // end tag
+	message[0] = i * sizeof(unsigned int);
+
+
+	bcm_mailbox_property(message,i*sizeof(unsigned int));
+
+	ret = message[5];
+
+	return ret;
+}
+
 int __init v3d_opt_init(void)
 {
 	int ret = 0;
@@ -1875,7 +1904,7 @@ int __init v3d_opt_init(void)
 	device_create(v3d_class, NULL, MKDEV(v3d_major, 0), NULL, V3D_DEV_NAME);
 
 #ifdef ENABLE_PROCFS
-	init_MUTEX(&v3d_status_sem);
+	sema_init(&v3d_status_sem, 1);
 #endif
 
 	gClkAHB = clk_get(NULL, BCM_CLK_V3D_STR_ID);
@@ -1884,8 +1913,16 @@ int __init v3d_opt_init(void)
 	cpufreq_client = cpufreq_bcm_client_get("v3d");
 #endif
 	v3d_turn_all_on();
-
-	v3d_base = (void __iomem *)ioremap_nocache(BCM21553_V3D_BASE, SZ_64K);
+	v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
+	if (v3dio[IDENT0] == 0x02443356) {
+		printk(KERN_ERR "v3d core already online\n");
+	} else {
+		qpu_enable(1);
+		if (v3dio[IDENT0] != 0x02443356) {
+			printk(KERN_ERR "cant find magic number in v3d registers\n");
+		}
+	}
+	v3d_base = v3dio;
 	if (v3d_base == NULL) {
 		KLOG_E("mapping v3d registers failed");
 		ret = -EINVAL;
@@ -1961,7 +1998,7 @@ int __init v3d_opt_init(void)
 
 	v3d_id = 1;
 	v3d_in_use = 0;
-	init_MUTEX(&v3d_sem);
+	sema_init(&v3d_sem, 1);
 	INIT_ACQUIRE;
 	init_waitqueue_head(&v3d_isr_done_q);
 	init_waitqueue_head(&v3d_start_q);
@@ -1969,16 +2006,18 @@ int __init v3d_opt_init(void)
 	v3d_job_curr = NULL;
 	
 #ifdef ENABLE_PROCFS
-	v3d_proc_file = create_proc_entry(V3D_DEV_NAME, 0644, NULL);
-	if (v3d_proc_file) {
+	//v3d_proc_file = create_proc_entry(V3D_DEV_NAME, 0644, NULL);
+	
+	v3d_proc_file = proc_create(V3D_DEV_NAME, 0644, NULL, &v3d_proc_fops);
+	/* if (v3d_proc_file) {
 		v3d_proc_file->data = NULL;
 		v3d_proc_file->read_proc = v3d_proc_get_status;
 		v3d_proc_file->write_proc = v3d_proc_set_status;
 		// v3d_proc_file->owner = THIS_MODULE;
-	}
+	} 
 	else {
 		KLOG_E("Failed creating proc entry");
-	}
+	} */
 #endif
 	KLOG_V("v3d module init over");
 	

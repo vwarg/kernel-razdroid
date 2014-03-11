@@ -1,28 +1,20 @@
-cmd_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc -Wp,-MD,drivers/../../modules/../modules/drivers/char/brcm/v3d/.v3d.o.d  -nostdinc -isystem /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/../lib/gcc/arm-linux-gnueabihf/4.8.3/include -I/home/warg/src/kernel/linux/arch/arm/include -Iarch/arm/include/generated  -Iinclude -I/home/warg/src/kernel/linux/arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/home/warg/src/kernel/linux/include/uapi -Iinclude/generated/uapi -include /home/warg/src/kernel/linux/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-bcm2708/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -O2 -fno-dwarf2-cfi-asm -fstack-protector -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -marm -D__LINUX_ARM_ARCH__=6 -march=armv6 -mtune=arm1136j-s -msoft-float -Uarm -Wframe-larger-than=1024 -Wno-unused-but-set-variable -fomit-frame-pointer -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(v3d)"  -D"KBUILD_MODNAME=KBUILD_STR(v3d)" -c -o drivers/../../modules/../modules/drivers/char/brcm/v3d/.tmp_v3d.o drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.c
+cmd_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o := /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/arm-linux-gnueabihf-gcc -Wp,-MD,drivers/../../modules/../modules/drivers/char/brcm/v3d/.v3d_opt.o.d  -nostdinc -isystem /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/bin/../lib/gcc/arm-linux-gnueabihf/4.8.3/include -I/home/warg/src/kernel/linux/arch/arm/include -Iarch/arm/include/generated  -Iinclude -I/home/warg/src/kernel/linux/arch/arm/include/uapi -Iarch/arm/include/generated/uapi -I/home/warg/src/kernel/linux/include/uapi -Iinclude/generated/uapi -include /home/warg/src/kernel/linux/include/linux/kconfig.h -D__KERNEL__ -mlittle-endian -Iarch/arm/mach-bcm2708/include -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs -fno-strict-aliasing -fno-common -Werror-implicit-function-declaration -Wno-format-security -fno-delete-null-pointer-checks -O2 -fno-dwarf2-cfi-asm -fstack-protector -mabi=aapcs-linux -mno-thumb-interwork -funwind-tables -marm -D__LINUX_ARM_ARCH__=6 -march=armv6 -mtune=arm1136j-s -msoft-float -Uarm -Wframe-larger-than=1024 -Wno-unused-but-set-variable -fomit-frame-pointer -Wdeclaration-after-statement -Wno-pointer-sign -fno-strict-overflow -fconserve-stack -DCC_HAVE_ASM_GOTO    -D"KBUILD_STR(s)=\#s" -D"KBUILD_BASENAME=KBUILD_STR(v3d_opt)"  -D"KBUILD_MODNAME=KBUILD_STR(v3d_opt)" -c -o drivers/../../modules/../modules/drivers/char/brcm/v3d/.tmp_v3d_opt.o drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c
 
-source_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.c
+source_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o := drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c
 
-deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
-    $(wildcard include/config/brcm/v3d/opt.h) \
+deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o := \
     $(wildcard include/config/cpu/freq/gov/bcm21553.h) \
     $(wildcard include/config/bcm21553/v3d/sync/enable.h) \
-  include/linux/types.h \
-    $(wildcard include/config/uid16.h) \
+  include/linux/kernel.h \
     $(wildcard include/config/lbdaf.h) \
-    $(wildcard include/config/arch/dma/addr/t/64bit.h) \
-    $(wildcard include/config/phys/addr/t/64bit.h) \
-    $(wildcard include/config/64bit.h) \
-  include/uapi/linux/types.h \
-  arch/arm/include/generated/asm/types.h \
-  /home/warg/src/kernel/linux/include/uapi/asm-generic/types.h \
-  include/asm-generic/int-ll64.h \
-  include/uapi/asm-generic/int-ll64.h \
-  arch/arm/include/generated/asm/bitsperlong.h \
-  include/asm-generic/bitsperlong.h \
-  include/uapi/asm-generic/bitsperlong.h \
-  /home/warg/src/kernel/linux/include/uapi/linux/posix_types.h \
-  include/linux/stddef.h \
-  include/uapi/linux/stddef.h \
+    $(wildcard include/config/preempt/voluntary.h) \
+    $(wildcard include/config/debug/atomic/sleep.h) \
+    $(wildcard include/config/prove/locking.h) \
+    $(wildcard include/config/ring/buffer.h) \
+    $(wildcard include/config/tracing.h) \
+    $(wildcard include/config/ftrace/mcount/record.h) \
+  /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.8.3/include/stdarg.h \
+  include/linux/linkage.h \
   include/linux/compiler.h \
     $(wildcard include/config/sparse/rcu/pointer.h) \
     $(wildcard include/config/trace/branch/profiling.h) \
@@ -35,11 +27,96 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/optimize/inlining.h) \
   include/linux/compiler-gcc4.h \
     $(wildcard include/config/arch/use/builtin/bswap.h) \
+  include/linux/stringify.h \
+  include/linux/export.h \
+    $(wildcard include/config/have/underscore/symbol/prefix.h) \
+    $(wildcard include/config/modules.h) \
+    $(wildcard include/config/modversions.h) \
+    $(wildcard include/config/unused/symbols.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/linkage.h \
+  include/linux/stddef.h \
+  include/uapi/linux/stddef.h \
+  include/linux/types.h \
+    $(wildcard include/config/uid16.h) \
+    $(wildcard include/config/arch/dma/addr/t/64bit.h) \
+    $(wildcard include/config/phys/addr/t/64bit.h) \
+    $(wildcard include/config/64bit.h) \
+  include/uapi/linux/types.h \
+  arch/arm/include/generated/asm/types.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/types.h \
+  include/asm-generic/int-ll64.h \
+  include/uapi/asm-generic/int-ll64.h \
+  arch/arm/include/generated/asm/bitsperlong.h \
+  include/asm-generic/bitsperlong.h \
+  include/uapi/asm-generic/bitsperlong.h \
+  /home/warg/src/kernel/linux/include/uapi/linux/posix_types.h \
   /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/posix_types.h \
   /home/warg/src/kernel/linux/include/uapi/asm-generic/posix_types.h \
+  include/linux/bitops.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/bitops.h \
+    $(wildcard include/config/smp.h) \
+  include/linux/irqflags.h \
+    $(wildcard include/config/trace/irqflags.h) \
+    $(wildcard include/config/irqsoff/tracer.h) \
+    $(wildcard include/config/preempt/tracer.h) \
+    $(wildcard include/config/trace/irqflags/support.h) \
+  include/linux/typecheck.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/irqflags.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/ptrace.h \
+    $(wildcard include/config/arm/thumb.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/ptrace.h \
+    $(wildcard include/config/cpu/endian/be8.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/hwcap.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/hwcap.h \
+  include/asm-generic/bitops/non-atomic.h \
+  include/asm-generic/bitops/fls64.h \
+  include/asm-generic/bitops/sched.h \
+  include/asm-generic/bitops/hweight.h \
+  include/asm-generic/bitops/arch_hweight.h \
+  include/asm-generic/bitops/const_hweight.h \
+  include/asm-generic/bitops/lock.h \
+  include/asm-generic/bitops/le.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/byteorder.h \
+  include/linux/byteorder/little_endian.h \
+  include/uapi/linux/byteorder/little_endian.h \
+  include/linux/swab.h \
+  include/uapi/linux/swab.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/swab.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/swab.h \
+  include/linux/byteorder/generic.h \
+  include/asm-generic/bitops/ext2-atomic-setbit.h \
+  include/linux/log2.h \
+    $(wildcard include/config/arch/has/ilog2/u32.h) \
+    $(wildcard include/config/arch/has/ilog2/u64.h) \
+  include/linux/printk.h \
+    $(wildcard include/config/early/printk.h) \
+    $(wildcard include/config/printk.h) \
+    $(wildcard include/config/dynamic/debug.h) \
   include/linux/init.h \
     $(wildcard include/config/broken/rodata.h) \
-    $(wildcard include/config/modules.h) \
+  include/linux/kern_levels.h \
+  include/linux/dynamic_debug.h \
+  include/linux/string.h \
+    $(wildcard include/config/binary/printf.h) \
+  include/uapi/linux/string.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/string.h \
+  include/linux/errno.h \
+  include/uapi/linux/errno.h \
+  arch/arm/include/generated/asm/errno.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/errno.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/errno-base.h \
+  include/uapi/linux/kernel.h \
+  /home/warg/src/kernel/linux/include/uapi/linux/sysinfo.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/div64.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/compiler.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/bug.h \
+    $(wildcard include/config/bug.h) \
+    $(wildcard include/config/thumb2/kernel.h) \
+    $(wildcard include/config/debug/bugverbose.h) \
+    $(wildcard include/config/arm/lpae.h) \
+  include/asm-generic/bug.h \
+    $(wildcard include/config/generic/bug.h) \
+    $(wildcard include/config/generic/bug/relative/pointers.h) \
   include/linux/device.h \
     $(wildcard include/config/debug/devres.h) \
     $(wildcard include/config/acpi.h) \
@@ -48,8 +125,6 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/cma.h) \
     $(wildcard include/config/pm/sleep.h) \
     $(wildcard include/config/devtmpfs.h) \
-    $(wildcard include/config/printk.h) \
-    $(wildcard include/config/dynamic/debug.h) \
     $(wildcard include/config/sysfs/deprecated.h) \
   include/linux/ioport.h \
     $(wildcard include/config/memory/hotremove.h) \
@@ -62,36 +137,15 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
   include/linux/sysfs.h \
     $(wildcard include/config/debug/lock/alloc.h) \
     $(wildcard include/config/sysfs.h) \
-  include/linux/errno.h \
-  include/uapi/linux/errno.h \
-  arch/arm/include/generated/asm/errno.h \
-  /home/warg/src/kernel/linux/include/uapi/asm-generic/errno.h \
-  /home/warg/src/kernel/linux/include/uapi/asm-generic/errno-base.h \
   include/linux/lockdep.h \
     $(wildcard include/config/lockdep.h) \
     $(wildcard include/config/lock/stat.h) \
-    $(wildcard include/config/trace/irqflags.h) \
-    $(wildcard include/config/prove/locking.h) \
     $(wildcard include/config/prove/rcu.h) \
   include/linux/kobject_ns.h \
   include/linux/atomic.h \
     $(wildcard include/config/arch/has/atomic/or.h) \
     $(wildcard include/config/generic/atomic64.h) \
   /home/warg/src/kernel/linux/arch/arm/include/asm/atomic.h \
-    $(wildcard include/config/smp.h) \
-    $(wildcard include/config/arm/lpae.h) \
-  include/linux/irqflags.h \
-    $(wildcard include/config/irqsoff/tracer.h) \
-    $(wildcard include/config/preempt/tracer.h) \
-    $(wildcard include/config/trace/irqflags/support.h) \
-  include/linux/typecheck.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/irqflags.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/ptrace.h \
-    $(wildcard include/config/arm/thumb.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/ptrace.h \
-    $(wildcard include/config/cpu/endian/be8.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/hwcap.h \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/hwcap.h \
   /home/warg/src/kernel/linux/arch/arm/include/asm/barrier.h \
     $(wildcard include/config/cpu/32v6k.h) \
     $(wildcard include/config/cpu/xsc3.h) \
@@ -121,61 +175,6 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/compat.h) \
     $(wildcard include/config/debug/stack/usage.h) \
   include/linux/bug.h \
-    $(wildcard include/config/generic/bug.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/bug.h \
-    $(wildcard include/config/bug.h) \
-    $(wildcard include/config/thumb2/kernel.h) \
-    $(wildcard include/config/debug/bugverbose.h) \
-  include/linux/linkage.h \
-  include/linux/stringify.h \
-  include/linux/export.h \
-    $(wildcard include/config/have/underscore/symbol/prefix.h) \
-    $(wildcard include/config/modversions.h) \
-    $(wildcard include/config/unused/symbols.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/linkage.h \
-  include/asm-generic/bug.h \
-    $(wildcard include/config/generic/bug/relative/pointers.h) \
-  include/linux/kernel.h \
-    $(wildcard include/config/preempt/voluntary.h) \
-    $(wildcard include/config/debug/atomic/sleep.h) \
-    $(wildcard include/config/ring/buffer.h) \
-    $(wildcard include/config/tracing.h) \
-    $(wildcard include/config/ftrace/mcount/record.h) \
-  /home/warg/src/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian/lib/gcc/arm-linux-gnueabihf/4.8.3/include/stdarg.h \
-  include/linux/bitops.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/bitops.h \
-  include/asm-generic/bitops/non-atomic.h \
-  include/asm-generic/bitops/fls64.h \
-  include/asm-generic/bitops/sched.h \
-  include/asm-generic/bitops/hweight.h \
-  include/asm-generic/bitops/arch_hweight.h \
-  include/asm-generic/bitops/const_hweight.h \
-  include/asm-generic/bitops/lock.h \
-  include/asm-generic/bitops/le.h \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/byteorder.h \
-  include/linux/byteorder/little_endian.h \
-  include/uapi/linux/byteorder/little_endian.h \
-  include/linux/swab.h \
-  include/uapi/linux/swab.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/swab.h \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/swab.h \
-  include/linux/byteorder/generic.h \
-  include/asm-generic/bitops/ext2-atomic-setbit.h \
-  include/linux/log2.h \
-    $(wildcard include/config/arch/has/ilog2/u32.h) \
-    $(wildcard include/config/arch/has/ilog2/u64.h) \
-  include/linux/printk.h \
-    $(wildcard include/config/early/printk.h) \
-  include/linux/kern_levels.h \
-  include/linux/dynamic_debug.h \
-  include/linux/string.h \
-    $(wildcard include/config/binary/printf.h) \
-  include/uapi/linux/string.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/string.h \
-  include/uapi/linux/kernel.h \
-  /home/warg/src/kernel/linux/include/uapi/linux/sysinfo.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/div64.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/compiler.h \
   /home/warg/src/kernel/linux/arch/arm/include/asm/thread_info.h \
     $(wildcard include/config/crunch.h) \
     $(wildcard include/config/arm/thumbee.h) \
@@ -267,23 +266,33 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/arm/dma/use/iommu.h) \
     $(wildcard include/config/arch/omap.h) \
   include/linux/pm_wakeup.h \
-  include/linux/bootmem.h \
-    $(wildcard include/config/no/bootmem.h) \
-    $(wildcard include/config/have/arch/bootmem/node.h) \
-    $(wildcard include/config/have/arch/alloc/remap.h) \
+  include/linux/module.h \
+    $(wildcard include/config/module/sig.h) \
+    $(wildcard include/config/kallsyms.h) \
+    $(wildcard include/config/tracepoints.h) \
+    $(wildcard include/config/event/tracing.h) \
+    $(wildcard include/config/module/unload.h) \
+    $(wildcard include/config/constructors.h) \
+    $(wildcard include/config/debug/set/module/ronx.h) \
+  include/linux/stat.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/stat.h \
+  include/uapi/linux/stat.h \
+  include/linux/kmod.h \
+  include/linux/gfp.h \
+    $(wildcard include/config/highmem.h) \
+    $(wildcard include/config/zone/dma.h) \
+    $(wildcard include/config/zone/dma32.h) \
   include/linux/mmzone.h \
     $(wildcard include/config/force/max/zoneorder.h) \
     $(wildcard include/config/memory/isolation.h) \
     $(wildcard include/config/memcg.h) \
-    $(wildcard include/config/zone/dma.h) \
-    $(wildcard include/config/zone/dma32.h) \
-    $(wildcard include/config/highmem.h) \
     $(wildcard include/config/compaction.h) \
     $(wildcard include/config/memory/hotplug.h) \
     $(wildcard include/config/sparsemem.h) \
     $(wildcard include/config/have/memblock/node/map.h) \
     $(wildcard include/config/discontigmem.h) \
     $(wildcard include/config/flat/node/mem/map.h) \
+    $(wildcard include/config/no/bootmem.h) \
     $(wildcard include/config/numa/balancing.h) \
     $(wildcard include/config/have/memory/present.h) \
     $(wildcard include/config/have/memoryless/nodes.h) \
@@ -350,25 +359,6 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/debug/objects/rcu/head.h) \
     $(wildcard include/config/rcu/nocb/cpu.h) \
   include/linux/rcutree.h \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/dma.h \
-    $(wildcard include/config/isa/dma/api.h) \
-    $(wildcard include/config/pci.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/asm/setup.h \
-    $(wildcard include/config/arm/nr/banks.h) \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/setup.h \
-  include/linux/module.h \
-    $(wildcard include/config/module/sig.h) \
-    $(wildcard include/config/kallsyms.h) \
-    $(wildcard include/config/tracepoints.h) \
-    $(wildcard include/config/event/tracing.h) \
-    $(wildcard include/config/module/unload.h) \
-    $(wildcard include/config/constructors.h) \
-    $(wildcard include/config/debug/set/module/ronx.h) \
-  include/linux/stat.h \
-  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/stat.h \
-  include/uapi/linux/stat.h \
-  include/linux/kmod.h \
-  include/linux/gfp.h \
   include/linux/topology.h \
     $(wildcard include/config/sched/smt.h) \
     $(wildcard include/config/sched/mc.h) \
@@ -594,6 +584,7 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
   include/asm-generic/sizes.h \
   /home/warg/src/kernel/linux/arch/arm/include/asm/io.h \
     $(wildcard include/config/need/mach/io/h.h) \
+    $(wildcard include/config/pci.h) \
     $(wildcard include/config/pcmcia/soc/common.h) \
     $(wildcard include/config/isa.h) \
     $(wildcard include/config/pccard.h) \
@@ -617,11 +608,120 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
   include/linux/mod_devicetable.h \
   include/linux/uuid.h \
   include/uapi/linux/uuid.h \
+  include/linux/dma-mapping.h \
+    $(wildcard include/config/has/dma.h) \
+    $(wildcard include/config/arch/has/dma/set/coherent/mask.h) \
+    $(wildcard include/config/have/dma/attrs.h) \
+    $(wildcard include/config/need/dma/map/state.h) \
+  include/linux/dma-attrs.h \
+  include/linux/dma-direction.h \
+  include/linux/scatterlist.h \
+    $(wildcard include/config/debug/sg.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/scatterlist.h \
+    $(wildcard include/config/arm/has/sg/chain.h) \
+  include/asm-generic/scatterlist.h \
+    $(wildcard include/config/need/sg/dma/length.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/dma-mapping.h \
+  include/linux/dma-debug.h \
+    $(wildcard include/config/dma/api/debug.h) \
+  include/asm-generic/dma-coherent.h \
+    $(wildcard include/config/have/generic/dma/coherent.h) \
+  include/asm-generic/dma-mapping-common.h \
+  include/linux/kmemcheck.h \
+  include/linux/kthread.h \
+  include/linux/sched.h \
+    $(wildcard include/config/sched/debug.h) \
+    $(wildcard include/config/no/hz/common.h) \
+    $(wildcard include/config/lockup/detector.h) \
+    $(wildcard include/config/core/dump/default/elf/headers.h) \
+    $(wildcard include/config/sched/autogroup.h) \
+    $(wildcard include/config/bsd/process/acct.h) \
+    $(wildcard include/config/taskstats.h) \
+    $(wildcard include/config/audit.h) \
+    $(wildcard include/config/cgroups.h) \
+    $(wildcard include/config/inotify/user.h) \
+    $(wildcard include/config/fanotify.h) \
+    $(wildcard include/config/posix/mqueue.h) \
+    $(wildcard include/config/keys.h) \
+    $(wildcard include/config/perf/events.h) \
+    $(wildcard include/config/schedstats.h) \
+    $(wildcard include/config/task/delay/acct.h) \
+    $(wildcard include/config/fair/group/sched.h) \
+    $(wildcard include/config/rt/group/sched.h) \
+    $(wildcard include/config/cgroup/sched.h) \
+    $(wildcard include/config/blk/dev/io/trace.h) \
+    $(wildcard include/config/rcu/boost.h) \
+    $(wildcard include/config/compat/brk.h) \
+    $(wildcard include/config/cc/stackprotector.h) \
+    $(wildcard include/config/sysvipc.h) \
+    $(wildcard include/config/detect/hung/task.h) \
+    $(wildcard include/config/rt/mutexes.h) \
+    $(wildcard include/config/task/xacct.h) \
+    $(wildcard include/config/cpusets.h) \
+    $(wildcard include/config/futex.h) \
+    $(wildcard include/config/fault/injection.h) \
+    $(wildcard include/config/latencytop.h) \
+    $(wildcard include/config/function/graph/tracer.h) \
+    $(wildcard include/config/bcache.h) \
+    $(wildcard include/config/have/unstable/sched/clock.h) \
+    $(wildcard include/config/no/hz/full.h) \
+  include/uapi/linux/sched.h \
+  arch/arm/include/generated/asm/cputime.h \
+  include/asm-generic/cputime.h \
+  include/asm-generic/cputime_jiffies.h \
+  include/linux/sem.h \
+  include/uapi/linux/sem.h \
+  include/linux/ipc.h \
+  include/uapi/linux/ipc.h \
+  arch/arm/include/generated/asm/ipcbuf.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/ipcbuf.h \
+  arch/arm/include/generated/asm/sembuf.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/sembuf.h \
+  include/linux/signal.h \
+    $(wildcard include/config/old/sigaction.h) \
+  include/uapi/linux/signal.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/signal.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/signal.h \
+  /home/warg/src/kernel/linux/include/uapi/asm-generic/signal-defs.h \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/sigcontext.h \
+  arch/arm/include/generated/asm/siginfo.h \
+  include/asm-generic/siginfo.h \
+  include/uapi/asm-generic/siginfo.h \
+  include/linux/proportions.h \
+  include/linux/seccomp.h \
+    $(wildcard include/config/seccomp.h) \
+    $(wildcard include/config/seccomp/filter.h) \
+  include/uapi/linux/seccomp.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/seccomp.h \
+  /home/warg/src/kernel/linux/include/uapi/linux/unistd.h \
+  /home/warg/src/kernel/linux/arch/arm/include/asm/unistd.h \
+    $(wildcard include/config/oabi/compat.h) \
+  /home/warg/src/kernel/linux/arch/arm/include/uapi/asm/unistd.h \
+  include/linux/rtmutex.h \
+    $(wildcard include/config/debug/rt/mutexes.h) \
+  include/linux/plist.h \
+    $(wildcard include/config/debug/pi/list.h) \
+  include/linux/resource.h \
+  include/uapi/linux/resource.h \
+  arch/arm/include/generated/asm/resource.h \
+  include/asm-generic/resource.h \
+  include/uapi/asm-generic/resource.h \
+  include/linux/task_io_accounting.h \
+    $(wildcard include/config/task/io/accounting.h) \
+  include/linux/latencytop.h \
+  include/linux/cred.h \
+    $(wildcard include/config/debug/credentials.h) \
+  include/linux/key.h \
+  include/linux/selinux.h \
+    $(wildcard include/config/security/selinux.h) \
+  include/linux/llist.h \
+    $(wildcard include/config/arch/have/nmi/safe/cmpxchg.h) \
+  include/linux/proc_fs.h \
   include/linux/broadcom/v3d.h \
+    $(wildcard include/config/brcm/v3d/opt.h) \
   drivers/../../modules/../modules/drivers/char/brcm/v3d/reg_v3d.h \
   arch/arm/mach-bcm2708/include/mach/vcio.h \
-  drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.h \
 
-drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o: $(deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o)
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o: $(deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o)
 
-$(deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o):
+$(deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o):
