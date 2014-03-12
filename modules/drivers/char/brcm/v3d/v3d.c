@@ -391,13 +391,13 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 
 	if(_IOC_NR(cmd) > V3D_CMD_LAST)
 		return -ENOTTY;
-
+/*
 	if(_IOC_DIR(cmd) & _IOC_READ)
 		ret = !access_ok(VERIFY_WRITE, (void *) arg, _IOC_SIZE(cmd));
 
 	if(_IOC_DIR(cmd) & _IOC_WRITE)
 		ret |= !access_ok(VERIFY_READ, (void *) arg, _IOC_SIZE(cmd));
-
+*/
 	if(ret)
 		return -EFAULT;
 

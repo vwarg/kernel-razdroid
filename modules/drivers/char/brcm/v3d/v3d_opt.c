@@ -1691,8 +1691,9 @@ static int v3d_mmap(struct file *filp, struct vm_area_struct *vma)
 	return 0;
 }
 
-static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, unsigned long arg)
+static long v3d_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
+
 	v3d_t *dev;
 	int ret = 0;
 
@@ -1700,22 +1701,25 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 	
 	if(_IOC_TYPE(cmd) != BCM_V3D_MAGIC) {
 		KLOG_E("_IOC_TYPE mismatch cmd[0x%08x]", cmd);
+		
 		return -ENOTTY;
 	}
 
 	if(_IOC_NR(cmd) > V3D_CMD_LAST) {
 		KLOG_E("_IOC_NR mismatch cmd[0x%08x]", cmd);
+		
 		return -ENOTTY;
 	}
-
+/*
 	if(_IOC_DIR(cmd) & _IOC_READ)
 		ret = !access_ok(VERIFY_WRITE, (void *) arg, _IOC_SIZE(cmd));
 
 	if(_IOC_DIR(cmd) & _IOC_WRITE)
 		ret |= !access_ok(VERIFY_READ, (void *) arg, _IOC_SIZE(cmd));
-
+*/
 	if(ret) {
 		KLOG_E ("dev_id[%d] cmd[0x%08x] is not a valid ioctl", dev->id, cmd);
+		
 		return -EFAULT;
 	}
 
@@ -1728,6 +1732,7 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 			
 			if (copy_from_user(&job_post, (v3d_job_post_t *)arg, sizeof(job_post))) {
 				KLOG_E("V3D_IOCTL_POST_JOB copy_from_user failed");
+				
 				ret = -EPERM;
 				break;
 			}
@@ -1742,6 +1747,7 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 			ret = v3d_job_wait(filp, &job_status);
 			if (copy_to_user((v3d_job_status_t *)arg, &job_status, sizeof(job_status))) {
 				KLOG_E("V3D_IOCTL_WAIT_JOB copy_to_user failed");
+				
 				ret = -EPERM;
 			}
 		}
@@ -1817,6 +1823,7 @@ static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, u
 	if (ret) {
 		KLOG_E ("ioctl[0x%08x] for dev_id[%d] failed[%d]", cmd, dev->id, ret);
 	}
+	
 	return ret;
 }
 
