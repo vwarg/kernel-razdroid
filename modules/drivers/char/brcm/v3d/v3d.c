@@ -31,11 +31,11 @@ the GPL, without Broadcom's express prior written consent.
 #include <asm/io.h>
 #include <asm/uaccess.h>
 #include <linux/clk.h>
-#include "clkmgr.h"
-#include "syscfg.h"
+//#include "clkmgr.h"
+//#include "syscfg.h"
 #include <linux/platform_device.h>
 #include <linux/broadcom/v3d.h>
-#include "reg_v3d.h"
+//#include "reg_v3d.h"
 #include <mach/vcio.h>
 #include "v3d.h"
 ////////////////////////////////////////////
@@ -140,22 +140,22 @@ typedef struct {
 // Athena B0 V3D APB read back bug workaround
 static inline void v3d_clean(void)
 {
-	iowrite32(0, v3d_base + SCRATCH);
-	if (ioread32(v3d_base + SCRATCH))
-		iowrite32(0, v3d_base + SCRATCH);
+	iowrite32(0, v3d_base + V3D_SCRATCH);
+	if (ioread32(v3d_base + V3D_SCRATCH))
+		iowrite32(0, v3d_base + V3D_SCRATCH);
 }
 
 void sync_mutex_down(volatile void __iomem *base)
 {
-	iowrite32(1, base + FLAG0);
-	iowrite32(1, base + TURN);
+	iowrite32(1, base + V3D_FLAG0);
+	iowrite32(1, base + V3D_TURN);
 
-	while ((ioread32(base + FLAG1) == 1) && (ioread32(base + TURN) == 1));
+	while ((ioread32(base + V3D_FLAG1) == 1) && (ioread32(base + V3D_TURN) == 1));
 }
 
 void sync_mutex_up(volatile void __iomem *base)
 {
-	iowrite32(0, base + FLAG0);
+	iowrite32(0, base + V3D_FLAG0);
 }
 #endif
 
@@ -197,22 +197,24 @@ static irqreturn_t v3d_isr(int irq, void *dev_id)
 #ifdef CONFIG_BCM21553_V3D_SYNC_ENABLE
 	spin_lock_irqsave(&dev->lock, flags2);
 #endif
-	flags = v3d_read(INTCTL);
-	flags &= v3d_read(INTENA);
-	flags &= v3d_read(INTCTL);
-	flags_qpu = v3d_read(DBQITC);
+	flags = v3d_read(V3D_INTCTL);
+	flags &= v3d_read(V3D_INTENA);
+	flags &= v3d_read(V3D_INTCTL);
+	flags_qpu = 0;
+	//flags_qpu = v3d_read(V3D_DBQITC);
 #ifdef CONFIG_BCM21553_V3D_SYNC_ENABLE
 	spin_unlock_irqrestore(&dev->lock, flags2);
 #endif
 
 	// see khrn_prod_4.c :: khrn_hw_isr
-	iowrite32(flags, v3d_base + INTCTL);
+	iowrite32(flags, v3d_base + V3D_INTCTL);
 	/* this interrupt will be forced high until we supply some memory... */
 	if (flags & (1 << 2))
-		iowrite32(1 << 2, v3d_base + INTDIS);
+		iowrite32(1 << 2, v3d_base + V3D_INTDIS);
 
-	if (flags_qpu)
-		iowrite32(flags_qpu, v3d_base + DBQITC);
+	flags_qpu = 0;
+	//if (flags_qpu)
+	//	iowrite32(flags_qpu, v3d_base + DBQITC);
 
 	if (!v3d_in_use) {
 		pr_err("\nv3d residual interrupt caught by handler with id = %d !\n", dev->id);
@@ -246,10 +248,12 @@ static void v3d_power(int flag)
 {
 	if (flag) {
 		/* Enable V3D island power */
-		clk_enable(gClkPower);
+		//clk_enable(gClkPower);
+		pr_debug("ENABLING V3D --> Not really //Warg");
 	} else {
 		/* Disable V3D island power */
-		clk_disable(gClkPower);
+		//clk_disable(gClkPower);
+		pr_debug("DISABLING V3D --> Not really //Warg");
 	}
 }
 
@@ -264,12 +268,12 @@ static void v3d_turn_all_on(void)
 		v3d_is_on = 1;
 	}
 
-	clk_enable(gClkAHB);
+	//clk_enable(gClkAHB);
 }
 
 static void v3d_turn_all_off(void)
 {
-	clk_disable(gClkAHB);
+	//clk_disable(gClkAHB);
 #ifdef CONFIG_CPU_FREQ_GOV_BCM21553
 	cpufreq_bcm_dvfs_enable(cpufreq_client);
 #endif
@@ -284,11 +288,11 @@ static int v3d_open(struct inode *inode, struct file *filp)
 	if (!dev)
 		return -ENOMEM;
 
-#define V3D_MEMPOOL_SIZE	(56*1024*1024)
+//#define V3D_MEMPOOL_SIZE	(56*1024*1024)
 	filp->private_data = dev;
 	uint32_t size = (1024*1024*2);
 	size += V3D_MEMPOOL_SIZE;
-	dev->mempool.ptr = phys_to_virt(get_mmpool_base(size)); //0; //v3d_mempool_base;
+	dev->mempool.ptr = v3d_mempool_base;
 	dev->mempool.addr = virt_to_phys(dev->mempool.ptr);
 
 	dev->mempool.size = V3D_MEMPOOL_SIZE;
@@ -381,7 +385,7 @@ static int v3d_mmap(struct file *filp, struct vm_area_struct *vma)
 	return 0;
 }
 
-static int v3d_ioctl(struct inode *inode, struct file *filp, unsigned int cmd, unsigned long arg)
+static long v3d_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
 	v3d_t *dev;
 	int ret = 0;
@@ -545,11 +549,11 @@ int __init v3d_init(void)
 //20:56:13 <+clever> Warg: this is what i use, it works perfectly
 //20:56:18 <+clever> if (v3dio[IDENT0] == 0x02443356) {
 	v3dio = ioremap_nocache(BCM2708_PERI_BASE + 0xc00000,0x1000);
-	if (v3dio[IDENT0] == 0x02443356) {
+	if (v3dio[V3D_IDENT0] == 0x02443356) {
 		printk(KERN_ERR "v3d core already online\n");
 	} else {
 		qpu_enable(1);
-		if (v3dio[IDENT0] != 0x02443356) {
+		if (v3dio[V3D_IDENT0] != 0x02443356) {
 			printk(KERN_ERR "cant find magic number in v3d registers\n");
 		}
 	}
@@ -568,11 +572,11 @@ int __init v3d_init(void)
 	{
 	unsigned long flags;
 	spin_lock_irqsave(&v3d_id_lock, flags);
-	ret = v3d_read(IDENT0);
+	ret = v3d_read(V3D_IDENT0);
 	spin_unlock_irqrestore(&v3d_id_lock, flags);
 	}
 #else
-	ret = v3d_read(IDENT0);
+	ret = v3d_read(V3D_IDENT0);
 #endif
 	pr_info("v3d id = 0x%04x\n", ret);
 

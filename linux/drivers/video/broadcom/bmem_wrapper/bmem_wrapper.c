@@ -655,14 +655,14 @@ err:
  * bmem_wrapper_ioctl()
  * Description : ioctl implementation of the bmem driver
  */
-static int bmem_wrapper_ioctl(struct inode *inode, struct file *filp,
+static long bmem_wrapper_ioctl(struct file *filp,
 				  unsigned int cmd, unsigned long arg)
 {
 	int result = -1;
 
 	pr_debug(KERN_DEBUG "bmem_wrapper_ioctl: ioctl cmd 0x%08x\n", cmd);
 
-	if (inode == NULL || filp == NULL) {
+	if (filp == NULL) {
 		KLOG_E("inode or filp found NULL");
 		return -EFAULT;
 	}

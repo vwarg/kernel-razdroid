@@ -609,8 +609,6 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
     $(wildcard include/config/have/clk/prepare.h) \
     $(wildcard include/config/have/clk.h) \
     $(wildcard include/config/of.h) \
-  drivers/../../modules/../modules/drivers/char/brcm/v3d/clkmgr.h \
-  drivers/../../modules/../modules/drivers/char/brcm/v3d/syscfg.h \
   include/linux/platform_device.h \
     $(wildcard include/config/suspend.h) \
     $(wildcard include/config/hibernate/callbacks.h) \
@@ -618,7 +616,6 @@ deps_drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.o := \
   include/linux/uuid.h \
   include/uapi/linux/uuid.h \
   include/linux/broadcom/v3d.h \
-  drivers/../../modules/../modules/drivers/char/brcm/v3d/reg_v3d.h \
   arch/arm/mach-bcm2708/include/mach/vcio.h \
   drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d.h \
 

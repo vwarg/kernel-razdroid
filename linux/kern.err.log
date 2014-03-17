@@ -1,0 +1,75 @@
+  CHK     include/generated/uapi/linux/version.h
+  CHK     include/generated/utsrelease.h
+  CC      scripts/mod/devicetable-offsets.s
+make[1]: `include/generated/mach-types.h' is up to date.
+  GEN     scripts/mod/devicetable-offsets.h
+  HOSTCC  scripts/mod/file2alias.o
+  CALL    scripts/checksyscalls.sh
+  HOSTLD  scripts/mod/modpost
+  CHK     include/generated/compile.h
+  CHK     kernel/config_data.h
+  CC      drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.o
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: In function 'v3d_isr':
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:565:24: warning: unused variable 'tmp' [-Wunused-variable]
+  u32 flags, flags_qpu, tmp;
+                        ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: At top level:
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:1854:2: warning: initialization from incompatible pointer type [enabled by default]
+  .read  = v3d_proc_get_status,
+  ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:1854:2: warning: (near initialization for 'v3d_proc_fops.read') [enabled by default]
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:1855:2: warning: initialization from incompatible pointer type [enabled by default]
+  .write  = v3d_proc_set_status,
+  ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:1855:2: warning: (near initialization for 'v3d_proc_fops.write') [enabled by default]
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: In function 'v3d_opt_init':
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:1946:11: warning: assignment discards 'volatile' qualifier from pointer target type [enabled by default]
+  v3d_base = v3dio;
+           ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: At top level:
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:111:20: warning: 'gClkPower' defined but not used [-Wunused-variable]
+ static struct clk *gClkPower, *gClkAHB;
+                    ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:111:32: warning: 'gClkAHB' defined but not used [-Wunused-variable]
+ static struct clk *gClkPower, *gClkAHB;
+                                ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: In function 'v3d_proc_get_status':
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:778:20: warning: ignoring return value of 'down_interruptible', declared with attribute warn_unused_result [-Wunused-result]
+  down_interruptible(&v3d_status_sem);
+                    ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: In function 'v3d_stat_end_point':
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:715:20: warning: ignoring return value of 'down_interruptible', declared with attribute warn_unused_result [-Wunused-result]
+  down_interruptible(&v3d_status_sem);
+                    ^
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c: In function 'v3d_stat_start_point':
+drivers/../../modules/../modules/drivers/char/brcm/v3d/v3d_opt.c:701:20: warning: ignoring return value of 'down_interruptible', declared with attribute warn_unused_result [-Wunused-result]
+  down_interruptible(&v3d_status_sem);
+                    ^
+  LD      drivers/../../modules/../modules/drivers/char/brcm/v3d/built-in.o
+  LD      drivers/../../modules/built-in.o
+  LD      drivers/built-in.o
+  LINK    vmlinux
+  LD      vmlinux.o
+  MODPOST vmlinux.o
+WARNING: modpost: Found 1 section mismatch(es).
+To see full details build your kernel with:
+'make CONFIG_DEBUG_SECTION_MISMATCH=y'
+  GEN     .version
+  CHK     include/generated/compile.h
+  UPD     include/generated/compile.h
+  CC      init/version.o
+  LD      init/built-in.o
+  KSYM    .tmp_kallsyms1.o
+  KSYM    .tmp_kallsyms2.o
+  LD      vmlinux
+  SORTEX  vmlinux
+  SYSMAP  System.map
+  OBJCOPY arch/arm/boot/Image
+  Building modules, stage 2.
+  Kernel: arch/arm/boot/Image is ready
+  GZIP    arch/arm/boot/compressed/piggy.gzip
+  AS      arch/arm/boot/compressed/piggy.gzip.o
+  LD      arch/arm/boot/compressed/vmlinux
+  OBJCOPY arch/arm/boot/zImage
+  Kernel: arch/arm/boot/zImage is ready
+  MODPOST 1214 modules
